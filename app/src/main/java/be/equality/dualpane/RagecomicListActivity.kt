@@ -1,22 +1,20 @@
 package be.equality.dualpane
 
+
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
-import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import be.equality.dualpane.domain.Comic
-
-
 import kotlinx.android.synthetic.main.activity_ragecomic_list.*
-import kotlinx.android.synthetic.main.ragecomic_detail.view.*
-import kotlinx.android.synthetic.main.ragecomic_list_content.view.*
 import kotlinx.android.synthetic.main.ragecomic_list.*
+import kotlinx.android.synthetic.main.ragecomic_list_content.view.*
 
 /**
  * An activity representing a list of Comics. This activity
@@ -34,21 +32,21 @@ class RagecomicListActivity : AppCompatActivity() {
      */
     private var twoPane: Boolean = false
 
+    private var comics: List<Comic>? = null
+
 
     /**
-     * Create the Activity and the Recyclerview
+     * Creates the Activity
+     * - dependencies (none)
+     * - restore saved state (none)
+     * - set view
+     * - restore state
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ragecomic_list)
 
         setSupportActionBar(toolbar)
-        toolbar.title = title
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         if (ragecomic_detail_container != null) {
             // The detail container view will be present only in the
@@ -58,15 +56,31 @@ class RagecomicListActivity : AppCompatActivity() {
             twoPane = true
         }
 
-        setupRecyclerView(ragecomic_list)
     }
 
-
     /**
-     * Creates the data source for the Recyclerview.
+     * Starts the Activity
+     * - Allocate resources
+     * - register click listeners
+     * - update UI
      */
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
-        // Get rage face names and descriptions.
+    override fun onStart() {
+        super.onStart()
+
+        comics = createComics()
+
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+        }
+
+        toolbar.title = title
+        ragecomic_list.adapter = SimpleItemRecyclerViewAdapter(this, comics!!, twoPane)
+    }
+
+    private fun createComics(): List<Comic> {
+        val comicList = mutableListOf<Comic>()
+
         val resources = applicationContext.resources
         val names = resources.getStringArray(R.array.names)
         val descriptions = resources.getStringArray(R.array.descriptions)
@@ -74,22 +88,31 @@ class RagecomicListActivity : AppCompatActivity() {
 
         // Get rage face images.
         val typedArray = resources.obtainTypedArray(R.array.images)
-        val imageCount = names.size
-        val imageResIds = IntArray(imageCount)
-        for (i in 0..imageCount - 1) {
+        val imageResIds = IntArray(names.size)
+        for (i in 0 until names.size) {
             imageResIds[i] = typedArray.getResourceId(i, 0)
+            val theComic = Comic(imageResIds[i], names[i], descriptions[i], urls[i], names[i])
+            comicList.add(theComic)
         }
         typedArray.recycle()
 
-        val list = mutableListOf<Comic>()
-        for (i in 0..imageCount - 1) {
-            val theComic = Comic(imageResIds[i],names[i],descriptions[i],urls[i],names[i])
-            list.add(theComic)
-        }
-
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(this, list,imageResIds, twoPane)
+        return comicList
     }
 
+
+    /**
+     * Stops the Activity
+     * - unregister listeners
+     * - release allocated resources
+     */
+    override fun onStop() {
+        super.onStop()
+
+        fab.setOnClickListener(null)
+
+
+        ragecomic_list.adapter = null
+    }
 
     /***********************************************************************************************
      * Recyclerview
@@ -97,8 +120,7 @@ class RagecomicListActivity : AppCompatActivity() {
      ***********************************************************************************************
      */
     class SimpleItemRecyclerViewAdapter(private val parentActivity: RagecomicListActivity,
-                                        private val values: MutableList<Comic>,
-                                        private val images : IntArray,
+                                        private val comics: List<Comic>,
                                         private val twoPane: Boolean) :
             RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
 
@@ -106,21 +128,19 @@ class RagecomicListActivity : AppCompatActivity() {
 
         init {
             onClickListener = View.OnClickListener { v ->
+                // Every view has a tag that can be used to store data related to that view
+                // Here each item in the RecyclerView keeps a reference to the comic it represents.
+                // This allows us to reuse a single listener for all items in the list
                 val item = v.tag as Comic
                 if (twoPane) {
-                    val fragment = RagecomicDetailFragment().apply {
-                        arguments = Bundle().apply {
-                            putSerializable(RagecomicDetailFragment.ARG_ITEM_ID,item)
-
-                        }
-                    }
+                    val fragment = RagecomicDetailFragment.newInstance(item)
                     parentActivity.supportFragmentManager
                             .beginTransaction()
                             .replace(R.id.ragecomic_detail_container, fragment)
                             .commit()
                 } else {
                     val intent = Intent(v.context, RagecomicDetailActivity::class.java).apply {
-                        putExtra(RagecomicDetailFragment.ARG_ITEM_ID, item)
+                        putExtra(RagecomicDetailFragment.ARG_COMIC, item)
 
                     }
                     v.context.startActivity(intent)
@@ -135,23 +155,21 @@ class RagecomicListActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = values[position]
-            holder.name.text = item.name
-            holder.image.setImageResource(item.imageResId)
+            val comic = comics[position]
+            holder.name.text = comic.name
+            holder.image.setImageResource(comic.imageResId)
 
             with(holder.itemView) {
-                tag = item
+                tag = comic // Save the comic represented by this view
                 setOnClickListener(onClickListener)
             }
         }
 
-        override fun getItemCount() = values.size
+        override fun getItemCount() = comics.size
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val name : TextView = view.listname
-            val image :ImageView = view.list_comic_image
-
-
+            val name: TextView = view.listname
+            val image: ImageView = view.list_comic_image
         }
     }
 }
