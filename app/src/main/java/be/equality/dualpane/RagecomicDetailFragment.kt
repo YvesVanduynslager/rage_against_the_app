@@ -22,30 +22,39 @@ class RagecomicDetailFragment : Fragment() {
      */
     private lateinit var comic: Comic
 
+    /**
+     * Creates the Fragment
+     * - initialise dependencies
+     * - restore state
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
+        //We only allow constructing the fragment through newInstance
+        // so we can force non-null arguments
+        arguments!!.let {
             if (it.containsKey(ARG_COMIC)) {
                 // Load the comic specified by the fragment
                 // arguments.
                 comic = it.getSerializable(ARG_COMIC) as Comic
-                activity?.toolbar_layout?.title = comic.name
             }
         }
     }
 
     /**
      * Creating the view for this fragment.
-     * The Let calls the specified function block with this value as its argument
-     * and returns its result.
+     * - update UI
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.ragecomic_detail, container, false)
 
+        activity?.toolbar_layout?.title = comic.name
+
         // Show the comic content
-        comic?.let {
+        // The let construct calls the specified function block with this value as its argument
+        // and returns its result.
+        comic.let {
             rootView.name.text = it.name
             rootView.description.text = it.description
             rootView.comic_image.setImageResource(it.imageResId)
