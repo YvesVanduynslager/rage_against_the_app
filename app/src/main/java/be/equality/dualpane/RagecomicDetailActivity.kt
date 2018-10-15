@@ -16,15 +16,17 @@ import kotlinx.android.synthetic.main.activity_ragecomic_detail.*
  */
 class RagecomicDetailActivity : AppCompatActivity() {
 
+    /**
+     * Creates the Activity
+     * - dependencies (none)
+     * - restore saved state (none)
+     * - set view
+     * - restore state
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ragecomic_detail)
         setSupportActionBar(detail_toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Maybe you could add Rage Comics here?", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         // Show the Up button in the action bar.
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -50,6 +52,34 @@ class RagecomicDetailActivity : AppCompatActivity() {
                     .add(R.id.ragecomic_detail_container, detailFragment)
                     .commit()
         }
+    }
+
+    /**
+     * Starts the Activity
+     * - Allocate resources
+     * - register click listeners
+     * - update UI
+     */
+    override fun onStart() {
+        super.onStart()
+
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Maybe you could add Rage Comics here?", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+        }
+
+    }
+
+
+    /**
+     * Stops the Activity
+     * - unregister listeners
+     * - release allocated resources
+     */
+    override fun onStop() {
+        super.onStop()
+
+        fab.setOnClickListener(null)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =

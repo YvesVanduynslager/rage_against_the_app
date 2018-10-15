@@ -20,7 +20,7 @@ class RagecomicDetailFragment : Fragment() {
     /**
      * The comic this fragment is representing
      */
-    private var comic: Comic? = null
+    private lateinit var comic: Comic
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +30,7 @@ class RagecomicDetailFragment : Fragment() {
                 // Load the comic specified by the fragment
                 // arguments.
                 comic = it.getSerializable(ARG_COMIC) as Comic
-                activity?.toolbar_layout?.title = comic?.name
+                activity?.toolbar_layout?.title = comic.name
             }
         }
     }
