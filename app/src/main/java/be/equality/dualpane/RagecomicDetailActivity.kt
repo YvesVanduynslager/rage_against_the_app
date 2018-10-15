@@ -41,15 +41,13 @@ class RagecomicDetailActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            val fragment = RagecomicDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(RagecomicDetailFragment.ARG_ITEM_ID,
-                            intent.getSerializableExtra(RagecomicDetailFragment.ARG_ITEM_ID) as Comic)
-                }
-            }
+
+            val detailFragment = RagecomicDetailFragment.newInstance(
+                    intent.getSerializableExtra(RagecomicDetailFragment.ARG_COMIC) as Comic
+            )
 
             supportFragmentManager.beginTransaction()
-                    .add(R.id.ragecomic_detail_container, fragment)
+                    .add(R.id.ragecomic_detail_container, detailFragment)
                     .commit()
         }
     }

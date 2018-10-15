@@ -14,7 +14,6 @@ import be.equality.dualpane.domain.Comic
 
 
 import kotlinx.android.synthetic.main.activity_ragecomic_list.*
-import kotlinx.android.synthetic.main.ragecomic_detail.view.*
 import kotlinx.android.synthetic.main.ragecomic_list_content.view.*
 import kotlinx.android.synthetic.main.ragecomic_list.*
 
@@ -110,7 +109,7 @@ class RagecomicListActivity : AppCompatActivity() {
                 if (twoPane) {
                     val fragment = RagecomicDetailFragment().apply {
                         arguments = Bundle().apply {
-                            putSerializable(RagecomicDetailFragment.ARG_ITEM_ID,item)
+                            putSerializable(RagecomicDetailFragment.ARG_COMIC,item)
 
                         }
                     }
@@ -120,7 +119,7 @@ class RagecomicListActivity : AppCompatActivity() {
                             .commit()
                 } else {
                     val intent = Intent(v.context, RagecomicDetailActivity::class.java).apply {
-                        putExtra(RagecomicDetailFragment.ARG_ITEM_ID, item)
+                        putExtra(RagecomicDetailFragment.ARG_COMIC, item)
 
                     }
                     v.context.startActivity(intent)

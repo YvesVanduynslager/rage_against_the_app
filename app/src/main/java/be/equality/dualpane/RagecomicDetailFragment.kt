@@ -5,11 +5,9 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import be.equality.dualpane.domain.Comic
 import kotlinx.android.synthetic.main.activity_ragecomic_detail.*
 import kotlinx.android.synthetic.main.ragecomic_detail.view.*
-
-import be.equality.dualpane.domain.Comic
 
 /**
  * A fragment representing a single Rage comic detail screen.
@@ -28,10 +26,10 @@ class RagecomicDetailFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            if (it.containsKey(ARG_ITEM_ID)) {
+            if (it.containsKey(ARG_COMIC)) {
                 // Load the comic specified by the fragment
                 // arguments.
-                comic = it.getSerializable(ARG_ITEM_ID) as Comic
+                comic = it.getSerializable(ARG_COMIC) as Comic
                 activity?.toolbar_layout?.title = comic?.name
             }
         }
@@ -60,6 +58,15 @@ class RagecomicDetailFragment : Fragment() {
          * The fragment argument representing the item ID that this fragment
          * represents.
          */
-        const val ARG_ITEM_ID = "item_id"
+        const val ARG_COMIC = "item_id"
+
+        fun newInstance(comic: Comic): RagecomicDetailFragment {
+            val args = Bundle()
+            args.putSerializable(ARG_COMIC, comic)
+            val fragment = RagecomicDetailFragment()
+            fragment.arguments = args
+
+            return fragment
+        }
     }
 }
