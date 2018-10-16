@@ -17,11 +17,11 @@ import kotlinx.android.synthetic.main.ragecomic_list.*
 import kotlinx.android.synthetic.main.ragecomic_list_content.view.*
 
 /**
- * An activity representing a list of Comics. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a [RagecomicDetailActivity] representing
- * item details. On tablets, the activity presents the list of items and
+ * An activity representing a list of Comics.
+ * This activity has different presentations for handset and tablet-size devices.
+ * On handsets, the activity presents a list of items, which when touched,
+ * lead to a [RagecomicDetailActivity] representing item details.
+ * On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
 class RagecomicListActivity : AppCompatActivity() {
@@ -44,6 +44,8 @@ class RagecomicListActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //activity_ragecomic_list will point to a different layout depending on the current
+        //  device configuration
         setContentView(R.layout.activity_ragecomic_list)
 
         setSupportActionBar(toolbar)
@@ -109,10 +111,33 @@ class RagecomicListActivity : AppCompatActivity() {
         super.onStop()
 
         fab.setOnClickListener(null)
-
-
         ragecomic_list.adapter = null
     }
+
+    /**
+     * Starts a new activity that will display the selected comic in more detail.
+     * This function is only called in portrait mode.
+     */
+    private fun startNewActivityForDetail(item: Comic) {
+        val intent = Intent(this, RagecomicDetailActivity::class.java).apply {
+            putExtra(RagecomicDetailFragment.ARG_COMIC, item)
+        }
+        startActivity(intent)
+    }
+
+    /**
+     * Replaces the current (or empty) fragment in the detail container
+     * with a fragment that displays the selected comic.
+     * This function is only called in landscape mode.
+     */
+    private fun placeComicInDetailFragment(item: Comic) {
+        val fragment = RagecomicDetailFragment.newInstance(item)
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.ragecomic_detail_container, fragment)
+                .commit()
+    }
+
 
     /***********************************************************************************************
      * Recyclerview
@@ -133,17 +158,9 @@ class RagecomicListActivity : AppCompatActivity() {
                 // This allows us to reuse a single listener for all items in the list
                 val item = v.tag as Comic
                 if (twoPane) {
-                    val fragment = RagecomicDetailFragment.newInstance(item)
-                    parentActivity.supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.ragecomic_detail_container, fragment)
-                            .commit()
+                    parentActivity.placeComicInDetailFragment(item)
                 } else {
-                    val intent = Intent(v.context, RagecomicDetailActivity::class.java).apply {
-                        putExtra(RagecomicDetailFragment.ARG_COMIC, item)
-
-                    }
-                    v.context.startActivity(intent)
+                    parentActivity.startNewActivityForDetail(item)
                 }
             }
         }
