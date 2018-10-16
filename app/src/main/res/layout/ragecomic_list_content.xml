@@ -28,6 +28,6 @@
         android:paddingTop="@dimen/recycler_item_footer_padding"
         android:paddingRight="@dimen/recycler_item_footer_padding"
         android:paddingBottom="@dimen/recycler_item_footer_padding"
-        tools:text="Comic name"/>
+        tools:text="@tools:sample/full_names"/>
 
 </FrameLayout>
