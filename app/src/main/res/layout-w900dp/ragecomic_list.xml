@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+This layout is a two-pane layout for the Rage comics
+master/detail flow.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,12 +16,6 @@
     android:showDividers="middle"
     tools:context=".RagecomicListActivity">
 
-    <!--
-    This layout is a two-pane layout for the Rage comics
-    master/detail flow.
-    
-    -->
-
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/ragecomic_list"
@@ -30,6 +28,11 @@
         tools:context="be.equality.dualpane.RagecomicListActivity"
         tools:listitem="@layout/ragecomic_list_content" />
 
+    <!--
+    This frame will hold the detail fragment
+    We could add it here in the XML, but that's not flexible
+    We will add it using code, which allows us to more easily swap different kinds of fragments
+     -->
     <FrameLayout
         android:id="@+id/ragecomic_detail_container"
         android:layout_width="0dp"
