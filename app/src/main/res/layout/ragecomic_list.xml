@@ -13,6 +13,5 @@ To see more information on a comic the user will have to click on a list item.
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
     tools:context=".RagecomicListActivity"
     tools:listitem="@layout/ragecomic_list_content" />

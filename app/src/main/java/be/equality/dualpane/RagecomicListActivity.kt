@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -78,6 +79,7 @@ class RagecomicListActivity : AppCompatActivity() {
 
         toolbar.title = title
         ragecomic_list.adapter = SimpleItemRecyclerViewAdapter(this, comics!!, twoPane)
+        ragecomic_list.layoutManager = LinearLayoutManager(this)
     }
 
     private fun createComics(): List<Comic> {
